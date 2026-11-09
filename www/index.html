@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6efe4">
+<title>สมศรี</title>
+<style>
+  /* ฟอนต์ฝังในแอป ใช้ได้ตอนออฟไลน์ */
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 400; font-display: swap; src: url(fonts/ibm-plex-sans-thai-thai-400-normal.woff2) format('woff2'); unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC; }
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 500; font-display: swap; src: url(fonts/ibm-plex-sans-thai-thai-500-normal.woff2) format('woff2'); unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC; }
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 600; font-display: swap; src: url(fonts/ibm-plex-sans-thai-thai-600-normal.woff2) format('woff2'); unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC; }
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 400; font-display: swap; src: url(fonts/ibm-plex-sans-thai-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 500; font-display: swap; src: url(fonts/ibm-plex-sans-thai-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'IBM Plex Sans Thai'; font-weight: 600; font-display: swap; src: url(fonts/ibm-plex-sans-thai-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+
+  :root {
+    --bg: #f6efe4;
+    --surface: #fffaf2;
+    --surface-2: #efe5d6;
+    --ink: #2b2420;
+    --muted: #7a6d62;
+    --line: #e2d6c4;
+    --accent: #c4502a;
+    --accent-ink: #ffffff;
+    --me: #2f5d50;
+    --me-ink: #f4f1ea;
+    --good: #2f7a4f;
+    --soft: #8a7f75;
+    --bar: #d98a5f;
+    --shadow: 0 1px 2px rgba(60, 40, 20, .06), 0 4px 14px rgba(60, 40, 20, .06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1916;
+      --surface: #262220;
+      --surface-2: #322c28;
+      --ink: #f1e9df;
+      --muted: #a89a8d;
+      --line: #3b342f;
+      --accent: #e3794f;
+      --accent-ink: #1c1916;
+      --me: #3f7a69;
+      --me-ink: #f4f1ea;
+      --good: #6cc191;
+      --soft: #9d9187;
+      --bar: #c97d55;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+  }
+  .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px 12px;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    background: var(--accent); color: var(--accent-ink);
+    display: grid; place-items: center; font-weight: 600; font-size: 18px;
+  }
+  .who { flex: 1; min-width: 0; }
+  .who b { display: block; font-size: 17px; font-weight: 600; }
+  .who small { color: var(--muted); font-size: 13px; }
+  .today-pill {
+    text-align: right; line-height: 1.2;
+  }
+  .today-pill small { display: block; color: var(--muted); font-size: 12px; }
+  .today-pill span { font-size: 18px; font-weight: 500; }
+
+  main { flex: 1; overflow: hidden; position: relative; }
+  .view { position: absolute; inset: 0; overflow-y: auto; display: none; padding: 16px; }
+  .view.active { display: block; }
+
+  /* chat */
+  #chat { padding-bottom: 8px; }
+  .msg { display: flex; margin: 6px 0; }
+  .msg.me { justify-content: flex-end; }
+  .bubble {
+    max-width: 82%; padding: 9px 13px; border-radius: 18px;
+    background: var(--surface); box-shadow: var(--shadow);
+    white-space: pre-wrap; word-wrap: break-word;
+  }
+  .msg.me .bubble { background: var(--me); color: var(--me-ink); border-bottom-right-radius: 6px; }
+  .msg.bot .bubble { border-bottom-left-radius: 6px; }
+  .bubble img { display: block; max-width: 200px; border-radius: 12px; margin-bottom: 6px; }
+  .items { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 6px; }
+  .item { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; }
+  .item .name { flex: 1; min-width: 0; }
+  .item .meta { display: block; color: var(--muted); font-size: 13px; }
+  .item .amt { font-weight: 500; white-space: nowrap; }
+  .amt.in { color: var(--good); }
+  .amt.xfer { color: var(--soft); }
+  .typing span {
+    display: inline-block; width: 7px; height: 7px; margin: 0 2px; border-radius: 50%;
+    background: var(--muted); animation: blink 1.2s infinite both;
+  }
+  .typing span:nth-child(2) { animation-delay: .2s; }
+  .typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+  .hint { color: var(--muted); font-size: 14px; text-align: center; margin: 24px 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer;
+  }
+
+  .composer {
+    display: none; gap: 8px; align-items: flex-end;
+    padding: 8px 12px 8px;
+    background: var(--bg); border-top: 1px solid var(--line);
+  }
+  .composer.active { display: flex; }
+  .composer textarea {
+    flex: 1; resize: none; border: 1px solid var(--line); border-radius: 22px;
+    padding: 10px 14px; font: inherit; color: var(--ink); background: var(--surface);
+    max-height: 120px; outline: none;
+  }
+  .composer textarea:focus { border-color: var(--accent); }
+  .icon-btn {
+    width: 44px; height: 44px; flex: none; border-radius: 50%; border: none;
+    display: grid; place-items: center; cursor: pointer; background: var(--surface-2); color: var(--ink);
+  }
+  .icon-btn.send { background: var(--accent); color: var(--accent-ink); }
+  .icon-btn:disabled { opacity: .45; }
+  .icon-btn svg { width: 22px; height: 22px; }
+  .preview {
+    display: none; align-items: center; gap: 8px; padding: 6px 12px 0; background: var(--bg);
+  }
+  .preview.show { display: flex; }
+  .preview img { height: 48px; border-radius: 8px; }
+  .preview button { border: none; background: none; color: var(--muted); font: inherit; cursor: pointer; }
+
+  /* today / range */
+  .card {
+    background: var(--surface); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .daynav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .daynav button {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer;
+  }
+  .daynav b { font-weight: 600; }
+  .big { font-size: 32px; font-weight: 500; line-height: 1.1; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.t { color: var(--muted); width: 52px; font-size: 13px; padding-top: 9px; }
+  td.r { text-align: right; white-space: nowrap; padding-left: 8px; }
+  td small { display: block; color: var(--muted); font-size: 12px; }
+  .bars .row { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; margin: 8px 0; font-size: 14px; }
+  .bars .track { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .bars .fill { height: 100%; background: var(--bar); border-radius: 4px; }
+  .cols { display: flex; align-items: flex-end; gap: 6px; height: 140px; margin-top: 8px; }
+  .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+  .col .v { font-size: 11px; color: var(--muted); }
+  .col .b { width: 100%; max-width: 34px; background: var(--bar); border-radius: 6px 6px 2px 2px; min-height: 2px; }
+  .col.today .b { background: var(--accent); }
+  .col .d { font-size: 12px; color: var(--muted); }
+  .empty { color: var(--muted); text-align: center; padding: 18px 0; }
+  .undo {
+    width: 100%; border: 1px solid var(--line); background: transparent; color: var(--ink);
+    border-radius: 12px; padding: 10px; font: inherit; cursor: pointer;
+  }
+
+  /* trips */
+  .trip-card {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    background: var(--surface); border: none; border-radius: 16px; padding: 14px 16px; margin-bottom: 10px;
+    box-shadow: var(--shadow); color: var(--ink); font: inherit; cursor: pointer;
+  }
+  .trip-card .tname { flex: 1; min-width: 0; }
+  .trip-card small { display: block; color: var(--muted); font-size: 13px; }
+  .tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+  .field { display: block; margin-bottom: 10px; }
+  .field span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .field input {
+    width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+    font: inherit; color: var(--ink); background: var(--bg); outline: none;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .btn {
+    border: none; background: var(--accent); color: var(--accent-ink); border-radius: 12px;
+    padding: 10px 16px; font: inherit; font-weight: 500; cursor: pointer; width: 100%;
+  }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn:disabled { opacity: .5; }
+  .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+  .back {
+    border: none; background: none; color: var(--accent); font: inherit; padding: 0; margin-bottom: 10px; cursor: pointer;
+  }
+  .trip-title { font-size: 22px; font-weight: 600; margin: 0 0 2px; }
+  .members { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+  .members .tag { font-size: 13px; padding: 3px 10px; }
+  .members .tag.add { background: none; border: 1px dashed var(--line); cursor: pointer; font: inherit; font-size: 13px; color: var(--muted); }
+  .settle { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .settle:last-child { border-bottom: none; }
+  .settle .arrow { color: var(--muted); }
+  .settle .amt { margin-left: auto; font-weight: 500; }
+  .settle.me-pay .amt { color: var(--accent); }
+  .settle.me-get .amt { color: var(--good); }
+  .ppl td { font-size: 14px; }
+  .ppl th { font-size: 12px; color: var(--muted); font-weight: 500; text-align: right; padding-bottom: 4px; }
+  .ppl th:first-child { text-align: left; }
+  .pos { color: var(--good); }
+  .neg { color: var(--accent); }
+  .exp { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; gap: 10px; }
+  .exp:last-child { border-bottom: none; }
+  .exp .body { flex: 1; min-width: 0; }
+  .exp small { display: block; color: var(--muted); font-size: 12px; }
+  .exp .del {
+    border: none; background: none; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; padding: 0 0 0 6px;
+  }
+  .exp .del.armed { color: var(--accent); font-weight: 600; }
+  .bot-note {
+    background: var(--surface); border-radius: 16px 16px 16px 6px; padding: 10px 13px; margin-bottom: 14px;
+    box-shadow: var(--shadow); white-space: pre-wrap;
+  }
+  .bot-note .warn { color: var(--accent); font-size: 14px; margin-top: 4px; }
+
+  .gear {
+    width: 36px; height: 36px; border: none; background: none; color: var(--muted);
+    display: grid; place-items: center; cursor: pointer; margin-left: 4px; flex: none;
+  }
+  .gear svg { width: 22px; height: 22px; }
+  .who small.off { color: var(--accent); }
+  .pending-tag { display: block; font-size: 12px; opacity: .75; margin-top: 4px; }
+  #setup {
+    position: fixed; inset: 0; z-index: 10; background: var(--bg); overflow-y: auto; display: none;
+    padding: calc(24px + var(--safe-area-inset-top, 0px)) 20px calc(24px + var(--safe-area-inset-bottom, 0px));
+  }
+  #setup.show { display: block; }
+  #setup h2 { margin: 12px 0 4px; font-size: 24px; font-weight: 600; }
+  #setup p { color: var(--muted); margin: 0 0 18px; font-size: 15px; }
+  #setup .avatar { width: 56px; height: 56px; font-size: 26px; }
+  #setup .err { color: var(--accent); font-size: 14px; min-height: 20px; margin: 6px 0; }
+  #setup .meta { color: var(--muted); font-size: 13px; margin-top: 18px; }
+
+  nav {
+    display: flex; border-top: 1px solid var(--line); background: var(--surface);
+    padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  }
+  nav button {
+    flex: 1; border: none; background: none; color: var(--muted); font: inherit; font-size: 13px;
+    padding: 8px 0 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+  }
+  nav button svg { width: 22px; height: 22px; }
+  nav button.active { color: var(--accent); font-weight: 600; }
+  .toast {
+    position: fixed; left: 50%; bottom: 140px; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px;
+    font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 90%;
+  }
+  .toast.show { opacity: .92; }
+</style>
+</head>
+<body>
+<header>
+  <div class="avatar">ศ</div>
+  <div class="who"><b>สมศรี</b><small id="status">พร้อมจดจ้า</small></div>
+  <div class="today-pill"><small>จ่ายวันนี้</small><span class="num" id="todayTotal">–</span></div>
+  <button class="gear" id="gearBtn" aria-label="ตั้งค่า">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+  </button>
+</header>
+
+<section id="setup">
+  <div class="avatar">ศ</div>
+  <h2>เชื่อมสมศรีกับชีต</h2>
+  <p>ใส่ URL ของ Apps Script (อันเดียวกับที่ใช้กับ Telegram ลงท้ายด้วย /exec) และรหัสแอปที่ตั้งไว้ใน Script Properties ชื่อ APP_TOKEN</p>
+  <label class="field"><span>Web app URL</span><input id="cfgUrl" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec"></label>
+  <label class="field"><span>รหัสแอป (APP_TOKEN)</span><input id="cfgToken" autocomplete="off" placeholder="รหัสที่ตั้งไว้"></label>
+  <div class="err" id="cfgErr"></div>
+  <div class="btn-row">
+    <button class="btn ghost" id="cfgCancel">ยกเลิก</button>
+    <button class="btn" id="cfgSave">เชื่อมต่อ</button>
+  </div>
+  <div class="meta" id="cfgMeta"></div>
+</section>
+
+<main>
+  <section class="view active" id="chat"></section>
+
+  <section class="view" id="day">
+    <div class="daynav">
+      <button id="prevDay" aria-label="วันก่อน">‹</button>
+      <b id="dayLabel"></b>
+      <button id="nextDay" aria-label="วันถัดไป">›</button>
+    </div>
+    <div class="card">
+      <h3>รายจ่ายสุทธิ</h3>
+      <div class="big num" id="dayNet">–</div>
+      <div class="sub" id="daySub"></div>
+    </div>
+    <div class="card"><h3>รายการ</h3><div id="dayRows"></div></div>
+    <div class="card"><h3>ตามหมวด</h3><div class="bars" id="dayCats"></div></div>
+    <div class="card"><h3>ตามช่องทาง</h3><div class="bars" id="dayMethods"></div></div>
+    <button class="undo" id="undoBtn">↩️ ลบรายการจากข้อความล่าสุด</button>
+  </section>
+
+  <section class="view" id="range">
+    <div class="card">
+      <h3>7 วันล่าสุด</h3>
+      <div class="big num" id="rangeTotal">–</div>
+      <div class="sub" id="rangeSub"></div>
+      <div class="cols" id="rangeCols"></div>
+    </div>
+    <div class="card"><h3>ตามหมวด (7 วัน)</h3><div class="bars" id="rangeCats"></div></div>
+  </section>
+
+  <section class="view" id="trips">
+    <div id="tripList"></div>
+    <div class="card">
+      <h3>ทริปใหม่</h3>
+      <label class="field"><span>ชื่อทริป</span><input id="newTripName" placeholder="เช่น เชียงใหม่ ธ.ค."></label>
+      <label class="field"><span>เพื่อนที่ไปด้วย (คั่นด้วยจุลภาค ไม่ต้องใส่ตัวเรา)</span><input id="newTripMembers" placeholder="ชิต, ทราย"></label>
+      <button class="btn" id="createTrip">สร้างทริป</button>
+    </div>
+  </section>
+
+  <section class="view" id="trip">
+    <button class="back" id="tripBack">‹ ทริปทั้งหมด</button>
+    <div class="trip-title" id="tripName"></div>
+    <div class="sub" id="tripMeta"></div>
+    <div class="members" id="tripMembers"></div>
+    <div id="tripNote"></div>
+    <div class="card">
+      <h3>ใครต้องโอนให้ใคร</h3>
+      <div id="tripSettle"></div>
+    </div>
+    <div class="card">
+      <h3>สรุปรายคน</h3>
+      <div id="tripPeople"></div>
+    </div>
+    <div class="card">
+      <h3>รายการ</h3>
+      <div id="tripExpenses"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="tripRecord">ลงบัญชีส่วนของเรา</button>
+      <button class="btn ghost" id="tripClose">ปิดทริป</button>
+    </div>
+  </section>
+</main>
+
+<div class="preview" id="preview"><img id="previewImg" alt=""><span>แนบรูปแล้ว</span><button id="clearImg">ยกเลิก</button></div>
+<div class="composer active" id="composer">
+  <input type="file" id="file" accept="image/*" hidden>
+  <button class="icon-btn" id="photoBtn" aria-label="แนบรูป">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+  </button>
+  <textarea id="input" rows="1" placeholder="พิมพ์หรือพูดใส่ไมค์คีย์บอร์ด"></textarea>
+  <button class="icon-btn send" id="sendBtn" aria-label="ส่ง">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+  </button>
+</div>
+
+<nav>
+  <button class="active" data-view="chat">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>คุย
+  </button>
+  <button data-view="day">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 4h10v16H7z"/><path d="M10 9h4M10 13h4M10 17h2"/></svg>บัญชี
+  </button>
+  <button data-view="range">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>ภาพรวม
+  </button>
+  <button data-view="trips">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M15 14.3c2.6-.4 4.7 1.2 5.5 4.7"/></svg>ทริป
+  </button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var APP_VERSION = '1.0.0';
+  var STORE_KEY = 'somsri_chat_v1';
+  var $ = function (id) { return document.getElementById(id); };
+  var chatEl = $('chat'), input = $('input'), sendBtn = $('sendBtn');
+  var history = load();
+  var pendingImage = null, busy = false, today = null, viewDate = null;
+  var mode = 'chat', currentTrip = null;
+
+  var TH_DAYS = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+  var TH_MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch (e) { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(history.slice(-60))); } catch (e) {}
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function baht(n) {
+    return Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ฿';
+  }
+  function thDate(str) {
+    var p = str.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return TH_DAYS[d.getDay()] + ' ' + (+p[2]) + ' ' + TH_MONTHS[+p[1] - 1] + ' ' + (+p[0] + 543);
+  }
+  function shiftDate(str, n) {
+    var p = str.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2] + n);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 2600);
+  }
+  /* ---------- เชื่อมต่อ Apps Script (API ผ่าน APP_TOKEN) ---------- */
+  var CFG_KEY = 'somsri_cfg', QUEUE_KEY = 'somsri_queue', CACHE_PREFIX = 'somsri_cache:';
+  var READS = { appDay: 1, appRange: 1, tripsList: 1, tripGet: 1 };
+  var online = true;
+
+  function lsGet(key, fallback) {
+    try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; }
+  }
+  function getCfg() { return lsGet(CFG_KEY, null); }
+
+  function rawCall(fn, args, cid, cfgOverride) {
+    var cfg = cfgOverride || getCfg();
+    if (!cfg) return Promise.reject(new Error('ยังไม่ได้ตั้งค่าการเชื่อมต่อ'));
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 90000);
+    return fetch(cfg.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // simple request: ไม่ติด CORS preflight
+      body: JSON.stringify({ api: fn, args: args || [], token: cfg.token, cid: cid || null }),
+      redirect: 'follow',
+      signal: ctrl.signal
+    }).then(function (res) {
+      return res.text();
+    }, function () {
+      var e = new Error('ไม่มีเน็ต'); e.network = true; throw e;
+    }).then(function (text) {
+      var j;
+      try { j = JSON.parse(text); } catch (e) {
+        throw new Error('URL ไม่ถูก หรือ deployment ไม่ได้ตั้งเป็น Anyone');
+      }
+      if (!j.ok) throw new Error(j.error || 'มีบางอย่างผิดพลาด');
+      return j.result;
+    }).catch(function (e) {
+      if (e && e.name === 'AbortError') { var n = new Error('เน็ตช้าเกินไป'); n.network = true; throw n; }
+      if (e instanceof TypeError) { e.network = true; }
+      throw e;
+    }).finally(function () { clearTimeout(timer); });
+  }
+
+  // อ่านข้อมูล: สำเร็จแล้วเก็บไว้ ถ้าออฟไลน์ใช้ของที่เก็บไว้ล่าสุด
+  function call(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    var key = CACHE_PREFIX + fn + ':' + JSON.stringify(args);
+    return rawCall(fn, args).then(function (r) {
+      if (READS[fn]) lsSet(key, r);
+      setOnline(true);
+      return r;
+    }, function (e) {
+      if (e.network) {
+        setOnline(false);
+        if (READS[fn]) {
+          var c = lsGet(key, null);
+          if (c) { toast('ออฟไลน์ · แสดงข้อมูลล่าสุดที่มี'); return c; }
+        }
+        throw new Error(READS[fn] ? 'ไม่มีเน็ต และยังไม่เคยโหลดหน้านี้ไว้' : 'ต้องต่อเน็ตก่อนนะ');
+      }
+      throw e;
+    });
+  }
+  function cachePut(fn, args, val) { lsSet(CACHE_PREFIX + fn + ':' + JSON.stringify(args), val); }
+
+  function setOnline(v) { online = v; updateStatus(); }
+  function updateStatus() {
+    var q = lsGet(QUEUE_KEY, []);
+    var el = $('status');
+    var parts = [];
+    if (!online) parts.push('ออฟไลน์');
+    if (q.length) parts.push('รอส่ง ' + q.length + ' รายการ');
+    el.textContent = parts.length ? parts.join(' · ') : (flushing ? 'กำลังจด…' : 'พร้อมจดจ้า');
+    el.classList.toggle('off', !online || q.length > 0);
+  }
+
+  /* ---------- คิวรอส่ง (พิมพ์ตอนออฟไลน์ได้) ---------- */
+  var flushing = false;
+  function newCid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function enqueue(item) {
+    var q = lsGet(QUEUE_KEY, []);
+    q.push(item);
+    if (!lsSet(QUEUE_KEY, q) && item.image) {
+      item.image = null;                       // ที่เก็บในเครื่องเต็ม: ตัดรูปออก เก็บแต่ข้อความ
+      q[q.length - 1] = item;
+      lsSet(QUEUE_KEY, q);
+      toast('รูปใหญ่เกินจะเก็บรอส่ง เก็บไว้แค่ข้อความ');
+    }
+    updateStatus();
+    flush();
+  }
+  function dequeue(cid) {
+    lsSet(QUEUE_KEY, lsGet(QUEUE_KEY, []).filter(function (x) { return x.cid !== cid; }));
+  }
+  function flush() {
+    if (flushing) return;
+    var q = lsGet(QUEUE_KEY, []);
+    if (!q.length || !getCfg()) { updateStatus(); return; }
+    var item = q[0];
+    flushing = true; updateStatus();
+    if (item.kind === 'chat') showTyping(true);
+    if (item.kind === 'trip' && currentTrip && currentTrip.id === item.tripId) {
+      $('tripNote').innerHTML = '<div class="bot-note typing"><span></span><span></span><span></span></div>';
+    }
+    var p = item.kind === 'trip'
+      ? rawCall('tripAddText', [item.tripId, item.text, item.image || null], item.cid)
+      : rawCall('appChat', [item.text, item.image || null, item.context || [], item.at], item.cid);
+    p.then(function (res) {
+      dequeue(item.cid); flushing = false; setOnline(true);
+      done(item, res, null);
+      flush();
+    }, function (e) {
+      flushing = false;
+      if (e.network) {
+        setOnline(false);
+        if (item.kind === 'chat') showTyping(false);
+        if (item.kind === 'trip' && currentTrip && currentTrip.id === item.tripId) {
+          $('tripNote').innerHTML = '<div class="bot-note">⏳ เก็บไว้แล้ว จะส่งให้เองตอนมีเน็ต</div>';
+        }
+        return;
+      }
+      dequeue(item.cid);
+      done(item, null, e);
+      flush();
+    });
+  }
+  function done(item, res, err) {
+    if (item.kind === 'chat') {
+      showTyping(false);
+      history.forEach(function (h) { if (h.cid === item.cid) h.pending = false; });
+      var botMsg = err
+        ? { role: 'assistant', text: '⚠️ ' + err.message }
+        : { role: 'assistant', text: res.reply || (res.items.length ? 'จดแล้วจ้า' : 'อืม ไม่เจอรายการนะจ๊ะ'), items: res.items };
+      history.push(botMsg); save(); renderChat();
+      if (res && res.day) { today = res.day.date; setDay(res.day); }
+    } else {
+      var html = err
+        ? '<div class="bot-note"><div class="warn">⚠️ ' + esc(item.text) + ': ' + esc(err.message) + '</div></div>'
+        : '<div class="bot-note">' + esc(res.reply || (res.added.length ? 'จดแล้วจ้า' : '')) +
+          res.problems.map(function (p) { return '<div class="warn">⚠️ ' + esc(p) + '</div>'; }).join('') + '</div>';
+      if (res) cachePut('tripGet', [item.tripId], res.trip);
+      if (currentTrip && currentTrip.id === item.tripId && mode === 'trip') {
+        if (res) renderTrip(res.trip, html); else $('tripNote').innerHTML = html;
+        $('trip').scrollTop = 0;
+      } else {
+        toast(err ? 'ส่งรายการทริปไม่สำเร็จ: ' + err.message : 'ส่งรายการทริปที่ค้างไว้แล้ว');
+      }
+    }
+    updateStatus();
+  }
+  var typingEl = null;
+  function showTyping(on) {
+    if (on && !typingEl) {
+      typingEl = document.createElement('div');
+      typingEl.className = 'msg bot';
+      typingEl.innerHTML = '<div class="bubble typing"><span></span><span></span><span></span></div>';
+      chatEl.appendChild(typingEl); chatEl.scrollTop = chatEl.scrollHeight;
+    } else if (!on && typingEl) {
+      typingEl.remove(); typingEl = null;
+    }
+  }
+
+  /* ---------- chat ---------- */
+  function itemsHtml(items) {
+    if (!items || !items.length) return '';
+    return '<div class="items">' + items.map(function (t) {
+      var cls = '', sign = '';
+      if (t.type === 'รายรับ') { cls = 'in'; sign = '+'; }
+      else if (t.type === 'รับคืน') { cls = 'in'; sign = '−'; }
+      else if (t.type === 'โอนระหว่างบัญชี') { cls = 'xfer'; }
+      var meta = t.type === 'โอนระหว่างบัญชี'
+        ? 'โอน ' + t.method + ' → ' + (t.to_method || 'ไม่ระบุ')
+        : t.category + ' · ' + t.method + (t.method === 'ไม่ระบุ' ? ' ❓' : '');
+      return '<div class="item"><span class="name">' + esc(t.item) + '<span class="meta">' + esc(meta) +
+        '</span></span><span class="amt num ' + cls + '">' + sign + baht(t.amount) + '</span></div>';
+    }).join('') + '</div>';
+  }
+  function renderMsg(m) {
+    var div = document.createElement('div');
+    div.className = 'msg ' + (m.role === 'user' ? 'me' : 'bot');
+    var inner = '';
+    if (m.thumb) inner += '<img src="' + m.thumb + '" alt="">';
+    if (m.text) inner += esc(m.text);
+    inner += itemsHtml(m.items);
+    if (m.pending) inner += '<span class="pending-tag">⏳ รอส่งตอนมีเน็ต</span>';
+    div.innerHTML = '<div class="bubble">' + inner + '</div>';
+    chatEl.appendChild(div);
+    return div;
+  }
+  function renderChat() {
+    chatEl.innerHTML = '';
+    if (!history.length) {
+      chatEl.innerHTML = '<div class="hint">พ่นมาได้เลยจ้า จะจดให้เอง<br>หลายรายการในข้อความเดียวก็ได้ ส่งรูปสลิปก็ได้' +
+        '<div class="chips"><button class="chip">ข้าวกลางวัน 85 ทรูมันนี่</button>' +
+        '<button class="chip">รถไฟฟ้าสายสีเขียว 24 แรบบิท</button><button class="chip">วันนี้ใช้ไปเท่าไหร่</button></div></div>';
+      chatEl.querySelectorAll('.chip').forEach(function (c) {
+        c.onclick = function () { input.value = c.textContent; autosize(); input.focus(); };
+      });
+      return;
+    }
+    history.forEach(function (m) {
+      // ข้อความที่รอส่งแต่ส่งไปแล้วจริง (เช่น ปิดแอประหว่างรอ) ให้ดูจากคิว
+      renderMsg(m);
+    });
+    if (typingEl) chatEl.appendChild(typingEl);
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+  function send() {
+    if (mode === 'trip') return sendTrip();
+    var text = input.value.trim();
+    if (!text && !pendingImage) return;
+    if (!getCfg()) return openSetup();
+    if (!history.length) chatEl.innerHTML = '';
+    var image = pendingImage;
+    var cid = newCid();
+    var context = history.map(function (h) {
+      var t = h.text || (h.thumb ? '(ส่งรูป)' : '');
+      if (h.items && h.items.length) {
+        t += ' [บันทึกแล้ว: ' + h.items.map(function (i) { return i.item + ' ' + i.amount; }).join(', ') + ']';
+      }
+      return { role: h.role, text: t };
+    });
+    var userMsg = { role: 'user', text: text, thumb: image ? image.thumb : null, cid: cid, pending: true };
+    history.push(userMsg); save(); renderChat();
+    input.value = ''; autosize(); clearImage();
+    enqueue({
+      kind: 'chat', cid: cid, text: text, at: Date.now(), context: context,
+      image: image ? { media_type: image.media_type, data: image.data } : null
+    });
+  }
+  function setBusy() { updateStatus(); }
+  function autosize() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  }
+
+  /* ---------- photo: ย่อรูปก่อนส่ง (API รับไม่เกิน ~5MB) ---------- */
+  function onFile(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var max = 1600, w = img.width, h = img.height, s = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * s); c.height = Math.round(h * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        var dataUrl = c.toDataURL('image/jpeg', 0.85);
+        var t = document.createElement('canvas'), ts = Math.min(1, 240 / Math.max(w, h));
+        t.width = Math.round(w * ts); t.height = Math.round(h * ts);
+        t.getContext('2d').drawImage(img, 0, 0, t.width, t.height);
+        pendingImage = { media_type: 'image/jpeg', data: dataUrl.split(',')[1], thumb: t.toDataURL('image/jpeg', 0.7) };
+        $('previewImg').src = pendingImage.thumb;
+        $('preview').classList.add('show');
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  function clearImage() {
+    pendingImage = null; $('file').value = ''; $('preview').classList.remove('show');
+  }
+
+  /* ---------- day view ---------- */
+  function bars(el, obj) {
+    var keys = Object.keys(obj).filter(function (k) { return obj[k] > 0; })
+      .sort(function (a, b) { return obj[b] - obj[a]; });
+    if (!keys.length) { el.innerHTML = '<div class="empty">–</div>'; return; }
+    var max = obj[keys[0]];
+    el.innerHTML = keys.map(function (k) {
+      return '<div class="row"><span>' + esc(k) + '</span><span class="num">' + baht(obj[k]) + '</span>' +
+        '<div class="track"><div class="fill" style="width:' + (obj[k] / max * 100) + '%"></div></div></div>';
+    }).join('');
+  }
+  function setDay(d) {
+    if (d.date === today) { $('todayTotal').textContent = baht(d.net); cachePut('appDay', [null], d); }
+    cachePut('appDay', [d.date], d);
+    if (viewDate && d.date !== viewDate) return;
+    viewDate = d.date;
+    $('dayLabel').textContent = (d.date === today ? 'วันนี้ · ' : '') + thDate(d.date);
+    $('nextDay').disabled = d.date === today;
+    $('dayNet').textContent = baht(d.net);
+    var sub = [];
+    if (d.refund) sub.push('จ่าย ' + baht(d.expense) + ' − รับคืน ' + baht(d.refund));
+    if (d.income) sub.push('รายรับ ' + baht(d.income));
+    if (d.transfer) sub.push('โอนระหว่างบัญชี ' + baht(d.transfer) + ' (ไม่นับ)');
+    $('daySub').textContent = sub.join(' · ');
+    if (!d.rows.length) {
+      $('dayRows').innerHTML = '<div class="empty">ยังไม่มีรายการ</div>';
+    } else {
+      $('dayRows').innerHTML = '<table>' + d.rows.map(function (r) {
+        var cls = '', amt = baht(r.amount), meta = r.category + ' · ' + r.method;
+        if (r.type === 'รายรับ') { cls = 'in'; amt = '+' + amt; }
+        else if (r.type === 'รับคืน') { cls = 'in'; amt = '−' + amt; meta = 'รับคืน · ' + r.method; }
+        else if (r.type === 'โอนระหว่างบัญชี') { cls = 'xfer'; amt = '(' + amt + ')'; meta = r.method + ' ' + r.note; }
+        return '<tr><td class="t num">' + esc(r.time) + '</td><td>' + esc(r.item) + '<small>' + esc(meta) +
+          '</small></td><td class="r"><span class="amt num ' + cls + '">' + amt + '</span></td></tr>';
+      }).join('') + '</table>';
+    }
+    bars($('dayCats'), d.byCat);
+    bars($('dayMethods'), d.byMethod);
+    $('undoBtn').style.display = d.date === today && d.rows.length ? 'block' : 'none';
+  }
+  function loadDay(dateStr) {
+    viewDate = dateStr;
+    $('dayRows').innerHTML = '<div class="empty">กำลังโหลด…</div>';
+    call('appDay', dateStr).then(function (d) {
+      if (!today) today = d.date;
+      setDay(d);
+    }).catch(function (e) { toast(e.message || 'โหลดไม่สำเร็จ'); });
+  }
+
+  /* ---------- range view ---------- */
+  function loadRange() {
+    call('appRange', 7).then(function (r) {
+      $('rangeTotal').textContent = baht(r.total);
+      var first = 0;                       // เฉลี่ยนับจากวันแรกที่มีข้อมูล ไม่นับวันที่ยังไม่ได้เริ่มจด
+      while (first < r.days.length - 1 && !r.days[first].net) first++;
+      $('rangeSub').textContent = 'เฉลี่ย ' + baht(Math.round(r.total / (r.days.length - first))) + '/วัน' +
+        (r.income ? ' · รายรับ ' + baht(r.income) : '');
+      var max = Math.max.apply(null, r.days.map(function (d) { return d.net; }).concat([1]));
+      $('rangeCols').innerHTML = r.days.map(function (d) {
+        var p = d.date.split('-'), dow = new Date(+p[0], +p[1] - 1, +p[2]).getDay();
+        return '<div class="col' + (d.date === today ? ' today' : '') + '"><span class="v num">' +
+          (d.net ? Math.round(d.net) : '') + '</span><div class="b" style="height:' +
+          Math.max(d.net / max * 100, 1) + '%"></div><span class="d">' + TH_DAYS[dow] + '</span></div>';
+      }).join('');
+      bars($('rangeCats'), r.byCat);
+    }).catch(function (e) { toast(e.message || 'โหลดไม่สำเร็จ'); });
+  }
+
+  /* ---------- nav ---------- */
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.toggle('active', v.id === id); });
+    mode = id === 'trip' ? 'trip' : 'chat';
+    var showComposer = id === 'chat' || (id === 'trip' && currentTrip && currentTrip.status !== 'closed');
+    $('composer').classList.toggle('active', !!showComposer);
+    input.placeholder = mode === 'trip' ? 'ข้าว 600 ชิตจ่าย หารทุกคน' : 'พิมพ์หรือพูดใส่ไมค์คีย์บอร์ด';
+    clearImage();
+  }
+  document.querySelectorAll('nav button').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('nav button').forEach(function (x) { x.classList.toggle('active', x === b); });
+      var v = b.dataset.view;
+      if (v === 'trips' && currentTrip) { showView('trip'); loadTrip(currentTrip.id); return; }
+      showView(v);
+      if (v === 'day') loadDay(viewDate || today);
+      if (v === 'range') loadRange();
+      if (v === 'trips') loadTrips();
+      if (v === 'chat') chatEl.scrollTop = chatEl.scrollHeight;
+    };
+  });
+
+  /* ---------- trips ---------- */
+  function loadTrips() {
+    $('tripList').innerHTML = '<div class="empty">กำลังโหลด…</div>';
+    call('tripsList').then(function (list) {
+      if (!list.length) { $('tripList').innerHTML = '<div class="hint">ยังไม่มีทริป สร้างทริปแรกด้านล่างได้เลย</div>'; return; }
+      $('tripList').innerHTML = list.map(function (t) {
+        return '<button class="trip-card" data-id="' + esc(t.id) + '"><span class="tname"><b>' + esc(t.name) + '</b><small>' +
+          esc(t.members.join(', ')) + ' · ' + t.count + ' รายการ</small></span>' +
+          (t.status === 'closed' ? '<span class="tag">ปิดแล้ว</span>' : '') +
+          '<span class="num">' + baht(t.total) + '</span></button>';
+      }).join('');
+      $('tripList').querySelectorAll('.trip-card').forEach(function (c) {
+        c.onclick = function () { currentTrip = { id: c.dataset.id }; showView('trip'); loadTrip(c.dataset.id); };
+      });
+    }).catch(function (e) { toast(e.message); });
+  }
+  function loadTrip(id) {
+    call('tripGet', id).then(renderTrip).catch(function (e) { toast(e.message); });
+  }
+  function renderTrip(t, note) {
+    currentTrip = t;
+    cachePut('tripGet', [t.id], t);
+    $('tripName').textContent = t.name;
+    $('tripMeta').textContent = 'รวมทั้งทริป ' + baht(t.total) + ' · ' + t.expenses.length + ' รายการ' + (t.status === 'closed' ? ' · ปิดแล้ว' : '');
+    $('tripMembers').innerHTML = t.members.map(function (m) { return '<span class="tag">' + esc(m) + '</span>'; }).join('') +
+      (t.status !== 'closed' ? '<button class="tag add" id="addMember">+ เพิ่มคน</button>' : '');
+    if ($('addMember')) $('addMember').onclick = function () {
+      var name = prompt('ชื่อเพื่อนที่จะเพิ่ม');
+      if (name && name.trim()) call('tripAddMember', t.id, name.trim()).then(function (x) { renderTrip(x); }).catch(function (e) { toast(e.message); });
+    };
+    $('tripNote').innerHTML = note || '';
+
+    $('tripSettle').innerHTML = t.settlements.length ? t.settlements.map(function (x) {
+      var cls = x.from === 'เรา' ? ' me-pay' : (x.to === 'เรา' ? ' me-get' : '');
+      return '<div class="settle' + cls + '"><b>' + esc(x.from) + '</b><span class="arrow">→</span><b>' + esc(x.to) +
+        '</b><span class="amt num">' + baht(x.amount) + '</span></div>';
+    }).join('') : '<div class="empty">' + (t.expenses.length ? 'เคลียร์กันพอดี ไม่ต้องโอน 🎉' : 'ยังไม่มีรายการ') + '</div>';
+
+    $('tripPeople').innerHTML = '<table class="ppl"><tr><th>คน</th><th>จ่ายไป</th><th>ส่วนของตัวเอง</th><th>คงเหลือ</th></tr>' +
+      t.people.map(function (p) {
+        var cls = p.balance > 0 ? 'pos' : (p.balance < 0 ? 'neg' : '');
+        return '<tr><td>' + esc(p.name) + '</td><td class="r num">' + baht(p.paid) + '</td><td class="r num">' + baht(p.share) +
+          '</td><td class="r num ' + cls + '">' + (p.balance > 0 ? '+' : '') + baht(p.balance) + '</td></tr>';
+      }).join('') + '</table><div class="sub">คงเหลือ + = ได้คืน · − = ต้องจ่ายเพิ่ม</div>';
+
+    $('tripExpenses').innerHTML = t.expenses.length ? t.expenses.map(function (e) {
+      var payers = Object.keys(e.payers).map(function (k) { return k + (Object.keys(e.payers).length > 1 ? ' ' + baht(e.payers[k]) : ''); }).join(', ');
+      var shareKeys = Object.keys(e.shares);
+      var vals = shareKeys.map(function (k) { return e.shares[k]; });
+      var even = Math.max.apply(null, vals) - Math.min.apply(null, vals) < 0.02;
+      var split = shareKeys.length === t.members.length && even ? 'หารทุกคน'
+        : even ? 'หาร ' + shareKeys.join(', ')
+        : shareKeys.map(function (k) { return k + ' ' + baht(e.shares[k]); }).join(', ');
+      return '<div class="exp"><div class="body">' + esc(e.item) + '<small>' + esc(payers) + ' จ่าย · ' + esc(split) + '</small></div>' +
+        '<span class="num">' + baht(e.amount) + '</span>' +
+        (t.status !== 'closed' ? '<button class="del" data-id="' + esc(e.id) + '">ลบ</button>' : '') + '</div>';
+    }).join('') : '<div class="empty">พิมพ์รายการด้านล่างได้เลย</div>';
+    $('tripExpenses').querySelectorAll('.del').forEach(function (b) {
+      b.onclick = function () {
+        if (!b.classList.contains('armed')) {
+          b.classList.add('armed'); b.textContent = 'ลบ?';
+          setTimeout(function () { b.classList.remove('armed'); b.textContent = 'ลบ'; }, 3000);
+          return;
+        }
+        call('tripDeleteExpense', t.id, b.dataset.id).then(function (x) { renderTrip(x); }).catch(function (e) { toast(e.message); });
+      };
+    });
+
+    $('tripRecord').disabled = !!t.recorded;
+    $('tripRecord').textContent = t.recorded ? 'ลงบัญชีแล้ว ✓' : 'ลงบัญชีส่วนของเรา';
+    $('tripClose').textContent = t.status === 'closed' ? 'เปิดทริปอีกครั้ง' : 'ปิดทริป';
+    if (mode === 'trip') $('composer').classList.toggle('active', t.status !== 'closed');
+  }
+  function sendTrip() {
+    var text = input.value.trim();
+    if (!currentTrip || (!text && !pendingImage)) return;
+    var image = pendingImage;
+    input.value = ''; autosize(); clearImage();
+    $('tripNote').innerHTML = '<div class="bot-note">⏳ กำลังส่ง…</div>';
+    enqueue({
+      kind: 'trip', cid: newCid(), tripId: currentTrip.id, text: text, at: Date.now(),
+      image: image ? { media_type: image.media_type, data: image.data } : null
+    });
+  }
+  $('tripBack').onclick = function () { currentTrip = null; showView('trips'); loadTrips(); };
+  $('createTrip').onclick = function () {
+    var btn = $('createTrip'); btn.disabled = true;
+    call('tripCreate', $('newTripName').value, $('newTripMembers').value).then(function (t) {
+      $('newTripName').value = ''; $('newTripMembers').value = '';
+      currentTrip = t; showView('trip'); renderTrip(t);
+    }).catch(function (e) { toast(e.message); }).then(function () { btn.disabled = false; });
+  };
+  $('tripClose').onclick = function () {
+    call('tripSetStatus', currentTrip.id, currentTrip.status === 'closed' ? 'open' : 'closed')
+      .then(function (t) { renderTrip(t); }).catch(function (e) { toast(e.message); });
+  };
+  $('tripRecord').onclick = function () {
+    $('tripRecord').disabled = true;
+    call('tripRecordMyShare', currentTrip.id).then(function (t) {
+      renderTrip(t); toast('ลงบัญชีส่วนของเราแล้ว');
+    }).catch(function (e) { toast(e.message); $('tripRecord').disabled = false; });
+  };
+  $('prevDay').onclick = function () { if (viewDate) loadDay(shiftDate(viewDate, -1)); };
+  $('nextDay').onclick = function () { if (viewDate && viewDate !== today) loadDay(shiftDate(viewDate, 1)); };
+  $('undoBtn').onclick = function () {
+    $('undoBtn').disabled = true;
+    call('appUndo').then(function (res) {
+      toast(res.message.replace(/\n/g, ' '));
+      viewDate = res.day.date; setDay(res.day);
+    }).catch(function (e) { toast(e.message); })
+      .then(function () { $('undoBtn').disabled = false; });
+  };
+  sendBtn.onclick = send;
+  input.addEventListener('input', autosize);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey && window.matchMedia('(pointer: fine)').matches) { e.preventDefault(); send(); }
+  });
+  $('photoBtn').onclick = function () { $('file').click(); };
+  $('file').onchange = function () { onFile(this.files[0]); };
+  $('clearImg').onclick = clearImage;
+
+  /* ---------- ตั้งค่า ---------- */
+  function openSetup() {
+    var cfg = getCfg() || {};
+    $('cfgUrl').value = cfg.url || '';
+    $('cfgToken').value = cfg.token || '';
+    $('cfgErr').textContent = '';
+    $('cfgCancel').style.display = getCfg() ? '' : 'none';
+    var q = lsGet(QUEUE_KEY, []);
+    $('cfgMeta').textContent = 'สมศรี v' + APP_VERSION + (q.length ? ' · รอส่ง ' + q.length + ' รายการ' : '');
+    $('setup').classList.add('show');
+  }
+  function closeSetup() { $('setup').classList.remove('show'); }
+  $('gearBtn').onclick = openSetup;
+  $('cfgCancel').onclick = closeSetup;
+  $('cfgSave').onclick = function () {
+    var cfg = { url: $('cfgUrl').value.trim(), token: $('cfgToken').value.trim() };
+    if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(cfg.url)) {
+      $('cfgErr').textContent = 'URL ต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec'; return;
+    }
+    if (!cfg.token) { $('cfgErr').textContent = 'ใส่รหัสแอปด้วยนะ'; return; }
+    var btn = $('cfgSave'); btn.disabled = true; $('cfgErr').textContent = 'กำลังทดสอบ…';
+    rawCall('ping', [], null, cfg).then(function (r) {
+      lsSet(CFG_KEY, cfg); closeSetup(); setOnline(true);
+      today = r.today; start();
+    }).catch(function (e) {
+      $('cfgErr').textContent = e.network ? 'ต่อเน็ตไม่ได้ ลองใหม่อีกที' : e.message;
+    }).then(function () { btn.disabled = false; });
+  };
+
+  /* ---------- ปุ่มย้อนกลับของ Android + กลับเข้าแอป ---------- */
+  var CapApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+  if (CapApp) {
+    CapApp.addListener('backButton', function () {
+      if ($('setup').classList.contains('show') && getCfg()) return closeSetup();
+      var active = document.querySelector('.view.active').id;
+      if (active === 'trip') return $('tripBack').onclick();
+      if (active !== 'chat') return document.querySelector('nav button[data-view=chat]').onclick();
+      CapApp.exitApp();
+    });
+    CapApp.addListener('resume', function () { flush(); refreshVisible(); });
+  }
+  window.addEventListener('online', function () { setOnline(true); flush(); });
+  window.addEventListener('offline', function () { setOnline(false); });
+  setInterval(function () { if (lsGet(QUEUE_KEY, []).length) flush(); }, 20000);
+
+  function refreshVisible() {
+    if (!getCfg()) return;
+    var active = document.querySelector('.view.active').id;
+    if (active === 'day') loadDay(viewDate || today);
+    else if (active === 'range') loadRange();
+    else call('appDay', null).then(function (d) { today = d.date; setDay(d); }).catch(function () {});
+  }
+  function start() {
+    renderChat();
+    var cached = lsGet(CACHE_PREFIX + 'appDay:[null]', null);
+    if (cached) { today = cached.date; setDay(cached); }
+    call('appDay', null).then(function (d) { today = d.date; viewDate = null; setDay(d); })
+      .catch(function (e) { if (!cached) toast(e.message || 'เชื่อมต่อไม่สำเร็จ'); });
+    flush();
+  }
+
+  renderChat();
+  updateStatus();
+  if (getCfg()) start(); else openSetup();
+})();
+</script>
+</body>
+</html>

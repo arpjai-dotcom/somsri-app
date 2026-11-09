@@ -1,0 +1,8 @@
+{
+  "appId": "com.arnupong.somsri",
+  "appName": "สมศรี",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#f6efe4"
+  }
+}
