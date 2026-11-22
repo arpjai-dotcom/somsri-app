@@ -24,7 +24,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - uses: android-actions/setup-android@v3
+      # เครื่องของ GitHub มี Android SDK อยู่แล้วที่ $ANDROID_HOME
+      - name: Check Android SDK
+        run: echo "ANDROID_HOME=$ANDROID_HOME" && ls "$ANDROID_HOME/platforms"
 
       - name: Install packages
         run: npm ci
